@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "HU8WW6nf4/i33HuFEaHxY8MowEpBOqLmljfvZUjH3ZY=",
+  "Source": "DL.GameOfLife.Api",
+  "BasePath": "_content/DL.GameOfLife.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
