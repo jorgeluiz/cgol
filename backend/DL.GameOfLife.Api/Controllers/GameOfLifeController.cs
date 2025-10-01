@@ -75,11 +75,4 @@ public class GameOfLifeController : ControllerBase
         return Ok();
     }
 
-
-    [HttpPost("test")]
-    public async Task<ActionResult<BoardModel>> TestBoard([FromServices] IGameOfLifeService gameOfLifeService, [FromBody] BoardModel board)
-    {
-        var input = _mapper.Map<Board>(board);
-        return Ok(await gameOfLifeService.Calculate(input));
-    }
 }
