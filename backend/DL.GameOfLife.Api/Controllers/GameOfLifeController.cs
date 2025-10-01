@@ -77,9 +77,9 @@ public class GameOfLifeController : ControllerBase
 
 
     [HttpPost("test")]
-    public ActionResult<BoardModel> TestBoard([FromServices] IGameOfLifeService gameOfLifeService, [FromBody] BoardModel board)
+    public async Task<ActionResult<BoardModel>> TestBoard([FromServices] IGameOfLifeService gameOfLifeService, [FromBody] BoardModel board)
     {
         var input = _mapper.Map<Board>(board);
-        return Ok(gameOfLifeService.Calculate(input));
+        return Ok(await gameOfLifeService.Calculate(input));
     }
 }

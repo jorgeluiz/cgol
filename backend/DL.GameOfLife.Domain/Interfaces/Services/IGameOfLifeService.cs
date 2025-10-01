@@ -5,5 +5,5 @@ namespace DL.GameOfLife.Domain.Interfaces.Services;
 
 public interface IGameOfLifeService
 {
-    public Board Calculate(Board currentState);
+    public Task<Board> Calculate(Board currentState);
 }

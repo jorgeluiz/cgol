@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using DL.GameOfLife.Domain.Entities;
 using DL.GameOfLife.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ public class GameOfLifeService : IGameOfLifeService
     /// </summary>
     /// <param name="currentState">The current state of the board</param>
     /// <returns></returns>
-    public Board Calculate(Board currentState)
+    public async Task<Board> Calculate(Board currentState)
     {
         //Return the same board if there is no live cells
         if (!currentState.Cells.Any(x => x.IsAlive))
@@ -37,7 +38,7 @@ public class GameOfLifeService : IGameOfLifeService
         }
 
         //Go trought the board and apply the game logic
-        return CheckBoardCells(currentState);
+        return await CheckBoardCells(currentState);
     }
 
     /// <summary>
@@ -46,20 +47,30 @@ public class GameOfLifeService : IGameOfLifeService
     /// </summary>
     /// <param name="currentState"> The current state of the game</param>
     /// <returns>The new state of the game</returns>
-    private Board CheckBoardCells(Board currentState)
+    private async Task<Board> CheckBoardCells(Board currentState)
     {
         Board newBoard = new();
 
         //Convert cells to a dictionary for better performance during search
         Dictionary<(int, int), BoardCell> allCells = currentState.Cells.ToDictionary(x => (x.ColumnNumber, x.RowNumber));
 
+        ConcurrentBag<BoardCell> newBoardCells = new();
 
-        //Iterate trought cells and check his neighbours
-        foreach (var cell in currentState.Cells)
+        ParallelOptions parallelOptions = new ParallelOptions
         {
-            var isAlive = WillBeAlive(cell, allCells);
-            newBoard.Cells.Add(new BoardCell { IsAlive = isAlive, ColumnNumber = cell.ColumnNumber, RowNumber = cell.RowNumber });
-        }
+            MaxDegreeOfParallelism = 3
+        };
+
+        await Parallel.ForEachAsync(currentState.Cells, parallelOptions, async (cell, cancellationToken) =>
+        {
+            await Task.Run(() =>
+            {
+                var isAlive = WillBeAlive(cell, allCells);
+                newBoardCells.Add(new BoardCell { IsAlive = isAlive, ColumnNumber = cell.ColumnNumber, RowNumber = cell.RowNumber });
+            });
+        });
+
+        newBoard.Cells = newBoardCells.ToList();
 
         return newBoard;
     }
@@ -94,7 +105,7 @@ public class GameOfLifeService : IGameOfLifeService
         }
 
         //Rule #4 - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-         if (!cell.IsAlive && totalAliveNeighbours == 3)
+        if (!cell.IsAlive && totalAliveNeighbours == 3)
         {
             return true;
         }
