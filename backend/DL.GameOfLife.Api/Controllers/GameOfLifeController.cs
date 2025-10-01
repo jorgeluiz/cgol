@@ -1,5 +1,8 @@
 using System.Net;
+using AutoMapper;
 using DL.GameOfLife.Api.Models;
+using DL.GameOfLife.Domain.Entities;
+using DL.GameOfLife.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 namespace DL.GameOfLife.Api.Controllers;
 
@@ -9,10 +12,12 @@ public class GameOfLifeController : ControllerBase
 {
 
     private readonly ILogger<GameOfLifeController> _logger;
+    private readonly IMapper _mapper;
 
-    public GameOfLifeController(ILogger<GameOfLifeController> logger)
+    public GameOfLifeController(ILogger<GameOfLifeController> logger, IMapper mapper)
     {
         _logger = logger;
+        _mapper = mapper;
     }
 
     ///<summary>
@@ -56,7 +61,7 @@ public class GameOfLifeController : ControllerBase
     {
         return Ok();
     }
-    
+
     ///<summary>
     /// Final move
     ///<summary>
@@ -68,5 +73,13 @@ public class GameOfLifeController : ControllerBase
     public ActionResult<BoardModel> GoToFinal([FromQuery] string boardId)
     {
         return Ok();
+    }
+
+
+    [HttpPost("test")]
+    public ActionResult<BoardModel> TestBoard([FromServices] IGameOfLifeService gameOfLifeService, [FromBody] BoardModel board)
+    {
+        var input = _mapper.Map<Board>(board);
+        return Ok(gameOfLifeService.Calculate(input));
     }
 }

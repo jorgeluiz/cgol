@@ -1,8 +1,8 @@
 using System;
 
-namespace DL.GameOfLife.Api.Models;
+namespace DL.GameOfLife.Domain.Entities;
 
-public class BoardCellModel
+public class BoardCell
 {
     public int RowNumber { get; set; }
     public int ColumnNumber { get; set; }
