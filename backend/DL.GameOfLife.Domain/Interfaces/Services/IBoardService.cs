@@ -5,6 +5,7 @@ namespace DL.GameOfLife.Domain.Interfaces.Services;
 
 public interface IBoardService
 {
-    public Board Create(Board board);
-    public Board FindById(string boardId);
+    Task<Board> CreateAsync(Board board);
+    Task<Board> FindByIdAsync(string boardId);
+    Task DeleteByIdAsync(string boardId);
 }

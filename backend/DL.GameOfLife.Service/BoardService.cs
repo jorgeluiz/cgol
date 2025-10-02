@@ -1,18 +1,29 @@
-using System;
 using DL.GameOfLife.Domain.Entities;
+using DL.GameOfLife.Domain.Interfaces.Repositories;
 using DL.GameOfLife.Domain.Interfaces.Services;
 
 namespace DL.GameOfLife.Service;
 
 public class BoardService : IBoardService
 {
-    public Board Create(Board board)
+    private readonly IBoardRepository _repository;
+
+    public BoardService(IBoardRepository repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
     }
 
-    public Board FindById(string boardId)
+    public async Task<Board> CreateAsync(Board board)
     {
-        throw new NotImplementedException();
+        return await _repository.InsertAsync(board);
+    }
+
+    public async Task<Board> FindByIdAsync(string boardId)
+    {
+        return await _repository.FindByIdAsync(boardId);
+    }
+    public async Task DeleteByIdAsync(string boardId)
+    {
+        await _repository.RemoveByIdAsync(boardId);
     }
 }

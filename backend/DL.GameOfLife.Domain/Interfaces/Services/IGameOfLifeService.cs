@@ -5,5 +5,7 @@ namespace DL.GameOfLife.Domain.Interfaces.Services;
 
 public interface IGameOfLifeService
 {
+    public Task<Board> NewGame(Board board);
+    public Task<Board> LoadGame(string boardId);
     public Task<Board> Calculate(Board currentState);
 }
