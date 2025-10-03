@@ -6,3 +6,8 @@ C# (Backend)
 React (Frontend)
 
 Docker
+
+
+## Test commands
+dotnet test --collect:"XPlat Code Coverage"
+dotnet reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:coveragereport" -reporttypes:Html

@@ -20,7 +20,7 @@ namespace DL.GameOfLife.Tests
         {
             _mockLogger = new Mock<ILogger<GameOfLifeService>>();
             _mockBoardService = new Mock<IBoardService>();
-            _options = new Mock<IOptions<GameOfLifeOptions>>();
+            _options = new Mock<IOptions<GameOfLifeOptions>>(); 
             var mockOptions = new GameOfLifeOptions
             {
                 ColumnStartOffset = -1,
