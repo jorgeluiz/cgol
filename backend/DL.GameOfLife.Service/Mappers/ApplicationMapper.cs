@@ -1,6 +1,5 @@
-using System;
 using AutoMapper;
-using DL.GameOfLife.Api.Models;
+using DL.GameOfLife.Models;
 using DL.GameOfLife.Domain.Entities;
 
 namespace DL.GameOfLife.Api.Mappers;

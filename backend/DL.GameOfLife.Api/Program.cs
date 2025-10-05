@@ -1,8 +1,8 @@
-
 using AutoMapper;
 using DL.GameOfLife.Api.Mappers;
 using DL.GameOfLife.Extensions.Registers;
 using DL.GameOfLife.Data.Registers;
+using DL.GameOfLife.Api.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +23,9 @@ builder.Services.AddSingleton(
 #endregion
 
 #region Registers
+
+builder.Services.AddTransient<ErrorHandlingMiddleware>();
+
 builder.Services.RegisterServices(builder.Configuration);
 builder.Services.RegisterDataServices(builder.Configuration);
 #endregion
@@ -39,6 +42,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
 
