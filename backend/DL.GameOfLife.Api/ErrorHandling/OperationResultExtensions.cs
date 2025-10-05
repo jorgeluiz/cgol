@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using DL.GameOfLife.Domain.Common;
+using DL.GameOfLife.Models;
 
 namespace DL.GameOfLife.Api.ErrorHandling;
 [ExcludeFromCodeCoverage]

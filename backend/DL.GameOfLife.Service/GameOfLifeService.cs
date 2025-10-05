@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using DL.GameOfLife.Models;
 using DL.GameOfLife.Domain.Common;
 using DL.GameOfLife.Domain.Entities;
@@ -17,37 +16,33 @@ public class GameOfLifeService : IGameOfLifeService
     private readonly ILogger<GameOfLifeService> _logger;
     private readonly IMapper _mapper;
     private readonly IBoardService _boardService;
+    private readonly IGameOfLifeEngineService _gameEngineService;
     private readonly GameOfLifeOptions _options;
-    private readonly int _columnStartOffset;
-    private readonly int _columnEndOffset;
-    private readonly int _rowEndOffset;
-    private readonly int _rowStartOffset;
-    public GameOfLifeService(ILogger<GameOfLifeService> logger, IBoardService boardService, IOptions<GameOfLifeOptions> options, IMapper mapper)
+    public GameOfLifeService(ILogger<GameOfLifeService> logger, IBoardService boardService, IGameOfLifeEngineService gameEngineService, IOptions<GameOfLifeOptions> options, IMapper mapper)
     {
         _logger = logger;
+        _mapper = mapper;
         _boardService = boardService;
         _options = options.Value;
+        _gameEngineService = gameEngineService;
 
-        _columnStartOffset = _options.ColumnStartOffset;
-        _columnEndOffset = _options.ColumnEndOffset;
-        _rowStartOffset = _options.RowStartOffset;
-        _rowEndOffset = _options.RowEndOffset;
     }
 
+    #region Basic actions
     /// <summary>
     /// Create a new board an generates an boardId
     /// </summary>
     /// <param name="boardModel">The object containing the new board</param>
     /// <returns>The newly created board</returns>
-    public async Task<OperationResult<BoardModel>> NewGame(BoardModel boardModel)
+    public async Task<OperationResult<BoardModelResponse>> NewGame(BoardModelRequest boardModel)
     {
         var board = _mapper.Map<Board>(boardModel);
 
         var created = await _boardService.CreateAsync(board);
 
-        var result = _mapper.Map<BoardModel>(created);
+        var result = _mapper.Map<BoardModelResponse>(created);
 
-        return OperationResult<BoardModel>.Ok(result);
+        return OperationResult<BoardModelResponse>.Ok(result);
 
     }
 
@@ -56,17 +51,17 @@ public class GameOfLifeService : IGameOfLifeService
     /// </summary>
     /// <param name="boardId">The unique id of a board</param>
     /// <returns>The stored board</returns>
-    public async Task<OperationResult<BoardModel>> LoadGame(string boardId)
+    public async Task<OperationResult<BoardModelResponse>> LoadGame(string boardId)
     {
         var board = await _boardService.FindByIdAsync(boardId);
 
         if (board != null)
         {
-            var result = _mapper.Map<BoardModel>(board);
-            return OperationResult<BoardModel>.Ok(result);
+            var result = _mapper.Map<BoardModelResponse>(board);
+            return OperationResult<BoardModelResponse>.Ok(result);
         }
 
-        return OperationResult<BoardModel>.NotFound(ErrorCodes.ERR_0002.NewResultError());
+        return OperationResult<BoardModelResponse>.NotFound(ErrorCodes.ERR_0002.NewResultError());
     }
 
     /// <summary>
@@ -85,142 +80,124 @@ public class GameOfLifeService : IGameOfLifeService
 
         return OperationResult<long>.Ok(deleteCount);
     }
+    #endregion
 
+
+    #region Navigation actions
     /// <summary>
-    /// The main method that calculates the board states 
+    /// Move the board to the next state
     /// </summary>
-    /// <param name="currentState">The current state of the board</param>
-    /// <returns></returns>
-    public async Task<Board> Calculate(Board currentState)
+    /// <param name="boardId">The unique id of a board</param>
+    /// <returns>The new board</returns>
+    public async Task<OperationResult<BoardModelResponse>> NextState(string boardId)
     {
-        //Return the same board if there is no live cells
-        if (!currentState.Cells.Any(x => x.IsAlive))
+
+        //Load the current state
+        var board = await _boardService.FindByIdAsync(boardId);
+
+        //Increase one state if the board exist
+        if (board != null)
         {
-            return currentState;
+            var newState = await IncreaseBoardStateBy(board, 1, false);
+            //Map the result
+            var result = _mapper.Map<BoardModelResponse>(newState);
+
+            return OperationResult<BoardModelResponse>.Ok(result);
         }
 
-        //Go trought the board and apply the game logic
-        return await CheckBoardCells(currentState);
+        return OperationResult<BoardModelResponse>.NotFound(ErrorCodes.ERR_0002.NewResultError());
     }
 
     /// <summary>
-    /// Verify board cells and check if they 
-    /// will be alive or not in the next generation
+    /// Move the board to the defined state
     /// </summary>
-    /// <param name="currentState"> The current state of the game</param>
-    /// <returns>The new state of the game</returns>
-    private async Task<Board> CheckBoardCells(Board currentState)
+    /// <param name="boardId">The unique id of a board</param>
+    /// <returns>The new board</returns>
+    public async Task<OperationResult<BoardModelResponse>> IncrementState(string boardId, int statesToIncrement)
     {
-        Board newBoard = new();
 
-        //Convert cells to a dictionary for better performance during search
-        Dictionary<(int, int), BoardCell> allCells = currentState.Cells.ToDictionary(x => (x.ColumnNumber, x.RowNumber));
+        //Load the current state
+        var board = await _boardService.FindByIdAsync(boardId);
 
-        ConcurrentBag<BoardCell> newBoardCells = new();
-
-        ParallelOptions parallelOptions = new ParallelOptions
+        //Increase one state if the board exist
+        if (board != null)
         {
-            MaxDegreeOfParallelism = 3
-        };
+            var newState = await IncreaseBoardStateBy(board, statesToIncrement);
 
-        await Parallel.ForEachAsync(currentState.Cells, parallelOptions, async (cell, cancellationToken) =>
-        {
-            await Task.Run(() =>
+            //Map the result
+            var result = _mapper.Map<BoardModelResponse>(newState);
+
+            if (statesToIncrement > _options.StatesIncrementLimit)
             {
-                var isAlive = WillBeAlive(cell, allCells);
-                newBoardCells.Add(new BoardCell { IsAlive = isAlive, ColumnNumber = cell.ColumnNumber, RowNumber = cell.RowNumber });
-            });
-        });
-
-        newBoard.Cells = newBoardCells.ToList();
-
-        return newBoard;
-    }
-
-    /// <summary>
-    ///  Apply the game rules to check if the cell will be alive
-    /// </summary>
-    /// <param name="cell">The cell to be checked</param>
-    /// <param name="allCells">A dictionary containing all the other cells to search for the neighbours</param>
-    /// <returns>True or false rather the cell will be alive or not</returns>
-    private bool WillBeAlive(BoardCell cell, Dictionary<(int, int), BoardCell> allCells)
-    {
-        var myNeighbours = FindNeighbours(cell.ColumnNumber, cell.RowNumber, allCells);
-        var totalAliveNeighbours = myNeighbours.Count(x => x.IsAlive);
-
-        //Rule #1 - Any live cell with fewer than two live neighbours dies, as if by underpopulation.
-        if (cell.IsAlive && totalAliveNeighbours < 2)
-        {
-            return false;
-        }
-
-        //Rule #2 - Any live cell with two or three live neighbours lives on to the next generation.
-        if (cell.IsAlive && (totalAliveNeighbours == 2 || totalAliveNeighbours == 3))
-        {
-            return true;
-        }
-
-        //Rule #3 - Any live cell with more than three live neighbours dies, as if by overpopulation.
-        if (cell.IsAlive && totalAliveNeighbours > 3)
-        {
-            return false;
-        }
-
-        //Rule #4 - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-        if (!cell.IsAlive && totalAliveNeighbours == 3)
-        {
-            return true;
-        }
-
-        //Everything else counts as a dead cell
-        return false;
-    }
-    /// <summary>
-    /// Retreive all the neighbours of the current cell
-    /// </summary>
-    /// <param name="columnNumber">The current cell column number</param>
-    /// <param name="rowNumber">The current cell row number/param>
-    /// <param name="allCells">A dictionary with all cells of the board</param>
-    /// <returns>A list with all cell neighbours</returns>
-    private List<BoardCell> FindNeighbours(int columnNumber, int rowNumber, Dictionary<(int, int), BoardCell> allCells)
-    {
-        List<BoardCell> neighbours = new();
-
-        var neighboursKeys = GenerateNeighboursKeys(columnNumber, rowNumber);
-
-        foreach (var neighbourKey in neighboursKeys)
-        {
-            if (allCells.TryGetValue(neighbourKey, out var neighbour))
-            {
-                neighbours.Add(neighbour);
+                result.Errors.Add(ErrorCodes.ERR_0003.NewErrorModel());
             }
+
+            return OperationResult<BoardModelResponse>.Ok(result);
         }
 
-        return neighbours;
+        return OperationResult<BoardModelResponse>.NotFound(ErrorCodes.ERR_0002.NewResultError());
     }
+
     /// <summary>
-    ///  Create a list with the neighbour keys to be searched latter
+    /// Move the board to the defined state
     /// </summary>
-    /// <param name="cellColumn">The column number of the current cell</param>
-    /// <param name="cellRow">The row number of the current cell</param>
-    /// <returns>A list containing all the possibile keys bases on the offset configurations</returns>
-    private List<(int, int)> GenerateNeighboursKeys(int cellColumn, int cellRow)
+    /// <param name="boardId">The unique id of a board</param>
+    /// <returns>The new board</returns>
+    public async Task<OperationResult<BoardModelResponse>> IncrementTillTheLimit(string boardId)
     {
-        List<(int, int)> neighbourKeys = new();
 
-        for (var columnNumber = _columnStartOffset; columnNumber <= _columnEndOffset; columnNumber++)
+        //Load the current state
+        var board = await _boardService.FindByIdAsync(boardId);
+
+        //Increase one state if the board exist
+        if (board != null)
         {
-            for (var rowNumber = _rowStartOffset; rowNumber <= _rowEndOffset; rowNumber++)
-            {
-                //Skip the cell who called this function
-                if (columnNumber == 0 && rowNumber == 0)
-                {
-                    continue;
-                }
-                neighbourKeys.Add((cellColumn + columnNumber, cellRow + rowNumber));
-            }
+            var newState = await IncreaseBoardStateBy(board, _options.StatesIncrementLimit);
+
+            //Map the result
+            var result = _mapper.Map<BoardModelResponse>(newState);
+            result.Errors.Add(ErrorCodes.ERR_0003.NewErrorModel());
+
+            return OperationResult<BoardModelResponse>.Ok(result);
         }
 
-        return neighbourKeys;
+        return OperationResult<BoardModelResponse>.NotFound(ErrorCodes.ERR_0002.NewResultError());
     }
+
+    /// <summary>
+    /// Move the board to the next state
+    /// </summary>
+    /// <param name="boardId">The unique id of a board</param>
+    /// <param name="statesMove">The desired increment number</param>
+    /// <param name="verifyLimit">Whether it is necessary to check for the application state increment limit</param>
+    /// <returns>The last valid board</returns>
+    private async Task<Board> IncreaseBoardStateBy(Board board, int statesMove, bool verifyLimit = true)
+    {
+        Board output = new();
+        int statesLimit = statesMove;
+
+        //Avoid infinite calculations
+        if (verifyLimit && statesMove > _options.StatesIncrementLimit)
+        {
+            statesLimit = _options.StatesIncrementLimit;
+        }
+
+        for (int i = 0; i < statesLimit; i++)
+        {
+            //Get the next Generation
+            var newState = await _gameEngineService.Calculate(board);
+
+            //Set the parentId to preserve the history
+            newState.ParentId = board.Id;
+
+            //Store the new state
+            var newStateSaved = await _boardService.CreateAsync(newState);
+
+            output = newStateSaved;
+        }
+
+        return output;
+    }
+
+    #endregion
 }

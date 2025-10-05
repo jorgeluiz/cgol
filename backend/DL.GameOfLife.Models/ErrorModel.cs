@@ -1,6 +1,6 @@
 using System;
 
-namespace DL.GameOfLife.Api.ErrorHandling;
+namespace DL.GameOfLife.Models;
 
 public class ErrorModel
 {
@@ -12,5 +12,10 @@ public class ErrorModel
     {
         Code = code;
         Message = message;
+    }
+
+    public static ErrorModel New(string? code, string? message)
+    {
+        return new ErrorModel { Code = code, Message = message };
     }
 }

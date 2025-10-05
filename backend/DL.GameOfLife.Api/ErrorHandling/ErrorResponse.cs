@@ -1,3 +1,5 @@
+using DL.GameOfLife.Models;
+
 namespace DL.GameOfLife.Api.ErrorHandling;
 
 public class ErrorResponse
