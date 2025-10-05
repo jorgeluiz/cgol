@@ -7,16 +7,21 @@ public enum ErrorCodes
     /// <summary>
     /// Internal server error
     /// </summary>
-    [Description("An internal error occoured when the system tried to process your request")]
+    [Description("An internal error occurred while processing your request")]
     ERR_0000,
     /// <summary>
     /// Bad request
     /// </summary>
-    [Description("There is something wrong with the request you sent to be processed by the system")]
+    [Description("There was an error in the request you sent to the system.")]
     ERR_0001,
     /// <summary>
     /// Not Found
     /// </summary>
     [Description("Game not found")]
-    ERR_0002
+    ERR_0002,
+    /// <summary>
+    /// State progression limit reached
+    /// </summary>
+    [Description("State progression limit reached. The system returned the last valid state")]
+    ERR_0003
 }

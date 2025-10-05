@@ -22,21 +22,21 @@ public class GameOfLifeController : ControllerBase
     }
 
     /// <summary>
-    /// Create a board
+    /// Creates a board
     /// </summary>
     /// <remarks>
-    /// Create the first state of the game and returns the id of the board
+    /// Initializes the first state of the game and returns the board identifier.
     /// </remarks>
-    /// <param name="newBoard">A object that represents the first state of the game</param>
-    /// <returns>The newly created game</returns>
-    /// <response code="200">The game was successfully created</response>
-    /// <response code="400">The game that was send to be created is invalid</response>
-    /// <response code="500">Internal error</response>
+    /// <param name="newBoard">An object that represents the initial state of the game.</param>
+    /// <returns>The newly created game.</returns>
+    /// <response code="200">The game was successfully created.</response>
+    /// <response code="400">The game provided for creation is invalid.</response>
+    /// <response code="500">An internal error occurred.</response>
     [HttpPost]
-    [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BoardModelResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Create([FromBody] BoardModel newBoard)
+    public async Task<IActionResult> Create([FromBody] BoardModelRequest newBoard)
     {
         var result = await _service.NewGame(newBoard);
 
@@ -45,23 +45,23 @@ public class GameOfLifeController : ControllerBase
             return Ok(result.Model);
         }
 
-        return BadRequest(result.ErrorResponse<BoardModel>());
+        return BadRequest(result.ErrorResponse());
 
     }
 
     /// <summary>
-    /// Get the current state of a board
+    /// Gets the current state of a board
     /// </summary>
     /// <remarks>
-    /// Retrive the current state of the game based on its id
+    /// Retrieves the current state of the game based on its identifier.
     /// </remarks>
-    /// <param name="boardId">The unique identifier of the board</param>
-    /// <returns>The game that was stored in the server</returns>
-    /// <response code="200">The game that was stored in the server</response>
-    /// <response code="400">The game that was send to be loaded is invalid</response>
-    /// <response code="500">Internal error</response>
+    /// <param name="boardId">The unique identifier of the board.</param>
+    /// <returns>The game stored on the server.</returns>
+    /// <response code="200">The game was successfully retrieved from the server.</response>
+    /// <response code="400">The request to load the game is invalid.</response>
+    /// <response code="500">An internal error occurred.</response>
     [HttpGet("{boardId}")]
-    [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BoardModelResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(string boardId)
@@ -73,60 +73,104 @@ public class GameOfLifeController : ControllerBase
             return Ok(result.Model);
         }
 
-        return BadRequest(result.ErrorResponse<BoardModel>());
+        return BadRequest(result.ErrorResponse());
     }
 
     /// <summary>
-    /// Move to generation X
+    /// Advances to the next state
     /// </summary>
     /// <remarks>
-    /// Advance to a future state based on the desired number
+    /// Moves the game to the next state based on the current board identifier.
     /// </remarks>
     /// <param name="boardId">The unique identifier of the board.</param>
-    /// <param name="statesCount">How many states you want to advance based on the current board</param>
-    /// <returns>The state of the game after being processed the same amout of states that were requested</returns>
-    /// <response code="200">the last state of the board, after being calculated until the statesCount limit that were provided</response>
-    /// <response code="400">The game that was send to be calculated is invalid</response>
-    /// <response code="500">Internal error</response>
-    [HttpGet("move_to_generation/{boardId}/{statesCount}")]
-    [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
+    /// <returns>The new state of the game.</returns>
+    /// <response code="200">The latest state of the board after calculation.</response>
+    /// <response code="400">The request to calculate the next state is invalid.</response>
+    /// <response code="500">An internal error occurred.</response>
+    [HttpGet("next_state/{boardId}")]
+    [ProducesResponseType(typeof(BoardModelResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public ActionResult<IActionResult> GetNext(string boardId, int statesCount)
+    public async Task<IActionResult> NextState(string boardId)
     {
-        return Ok();
+        var result = await _service.NextState(boardId);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Model);
+        }
+
+        return BadRequest(result.ErrorResponse());
+    }
+
+    /// <summary>
+    /// Increments the current game by a specified number of states
+    /// </summary>
+    /// <remarks>
+    /// Advances the game to a future state based on the specified number of increments.
+    /// </remarks>
+    /// <param name="boardId">The unique identifier of the board.</param>
+    /// <param name="statesToIncrement">The number of states to advance from the current board state.</param>
+    /// <returns>
+    /// The state of the game after processing the specified number of increments. 
+    /// If the increments exceed the allowed limit, an error message will be returned along with the last valid state.
+    /// </returns>
+    /// <response code="200">The final state of the board after advancing the requested number of states.</response>
+    /// <response code="400">The request to calculate the future state is invalid.</response>
+    /// <response code="500">An internal error occurred.</response>
+    [HttpGet("increment_state/{boardId}/{statesToIncrement}")]
+    [ProducesResponseType(typeof(BoardModelResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> IncrementState(string boardId, int statesToIncrement)
+    {
+        var result = await _service.IncrementState(boardId, statesToIncrement);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Model);
+        }
+
+        return BadRequest(result.ErrorResponse());
     }
 
     /// <summary>
     /// Final move
     /// </summary>
     /// <remarks>
-    /// Advance to the last state based on the game
+    /// Advances the game to its final state based on the current board.
     /// </remarks>
     /// <param name="boardId">The unique identifier of the board.</param>
-    /// <returns>The final possible end for the game, after being processed until the calculations limit </returns>
-    /// <response code="200">the last state of the board</response>
-    /// <response code="400">The game that was send to be calculated is invalid</response>
-    /// <response code="500">Internal error</response>
+    /// <returns>The final possible state of the game after processing up to the calculation limit.</returns>
+    /// <response code="200">The last state of the board.</response>
+    /// <response code="400">The request to calculate the final state is invalid.</response>
+    /// <response code="500">An internal error occurred.</response>
     [HttpGet("final/{boardId}")]
-    [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BoardModelResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    public ActionResult<IActionResult> GoToFinal(string boardId)
+    public async Task<IActionResult> GoToFinal(string boardId)
     {
-        return Ok();
+        var result = await _service.IncrementTillTheLimit(boardId);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Model);
+        }
+
+        return BadRequest(result.ErrorResponse());
     }
 
     /// <summary>
-    /// End a game
+    /// Ends a game
     /// </summary>
     /// <remarks>
-    /// Delete all data related to a game, including the board and its cells
+    /// Deletes all data related to a game, including the board and its cells.
     /// </remarks>
-    /// <param name="boardId">The unique identifier of the board</param>
-    /// <response code="200">The total amount of games that were ended in this request</response>
-    /// <response code="400">The game that was send to be ended is invalid</response>
-    /// <response code="500">Internal error</response>
+    /// <param name="boardId">The unique identifier of the board.</param>
+    /// <response code="200">The total number of games successfully ended by this request.</response>
+    /// <response code="400">The request to end the game is invalid.</response>
+    /// <response code="500">An internal error occurred.</response>
     [HttpDelete("{boardId}")]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -140,7 +184,7 @@ public class GameOfLifeController : ControllerBase
             return Ok(result.Model);
         }
 
-        return BadRequest(result.ErrorResponse<long>());
+        return BadRequest(result.ErrorResponse());
     }
 
 }

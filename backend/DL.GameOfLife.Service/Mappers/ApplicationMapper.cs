@@ -8,7 +8,8 @@ public static class ApplicationMapper
 {
     public static void MainApplicationMap(this IMapperConfigurationExpression config)
     {
-        config.MapItem<Board, BoardModel>();
+        config.MapItem<Board, BoardModelRequest>();
+        config.MapItem<Board, BoardModelResponse>();
         config.MapItem<BoardCell, BoardCellModel>();
     }
 

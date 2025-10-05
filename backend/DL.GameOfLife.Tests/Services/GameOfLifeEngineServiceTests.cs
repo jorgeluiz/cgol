@@ -19,6 +19,7 @@ namespace DL.GameOfLife.Tests
             _options = new Mock<IOptions<GameOfLifeOptions>>();
             var mockOptions = new GameOfLifeOptions
             {
+                StatesIncrementLimit = 99,
                 ColumnStartOffset = -1,
                 ColumnEndOffset = 1,
                 RowStartOffset = -1,

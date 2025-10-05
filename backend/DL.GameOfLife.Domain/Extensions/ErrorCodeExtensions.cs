@@ -1,5 +1,6 @@
 using DL.GameOfLife.Domain.Common;
 using DL.GameOfLife.Domain.Enums;
+using DL.GameOfLife.Models;
 
 namespace DL.GameOfLife.Domain.Extensions;
 
@@ -18,5 +19,10 @@ public static class ErrorCodeExtensions
     public static ResultError NewResultError(this ErrorCodes errorCode)
     {
         return ResultError.New(errorCode.Code(), errorCode.Description());
+    }
+
+        public static ErrorModel NewErrorModel(this ErrorCodes errorCode)
+    {
+        return ErrorModel.New(errorCode.Code(), errorCode.Description());
     }
 }
