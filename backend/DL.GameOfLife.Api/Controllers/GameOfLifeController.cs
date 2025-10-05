@@ -1,4 +1,3 @@
-using System.Net;
 using AutoMapper;
 using DL.GameOfLife.Models;
 using DL.GameOfLife.Domain.Interfaces.Services;
@@ -22,16 +21,17 @@ public class GameOfLifeController : ControllerBase
         _service = service;
     }
 
-    ///<summary>
+    /// <summary>
     /// Create a board
-    ///<summary>
-    ///<remarks>
+    /// </summary>
+    /// <remarks>
     /// Create the first state of the game and returns the id of the board
-    ///</remarks>
-    ///<param name="newBoard">A object that represents the first state of the game</param>
-    /// <response> code="200">The game was successfully created</response>
-    /// <response> code="400">The game that was send to be created is invalid</response>
-    /// <response> code="500">Internal error</response>
+    /// </remarks>
+    /// <param name="newBoard">A object that represents the first state of the game</param>
+    /// <returns>The newly created game</returns>
+    /// <response code="200">The game was successfully created</response>
+    /// <response code="400">The game that was send to be created is invalid</response>
+    /// <response code="500">Internal error</response>
     [HttpPost]
     [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -49,16 +49,17 @@ public class GameOfLifeController : ControllerBase
 
     }
 
-    ///<summary>
+    /// <summary>
     /// Get the current state of a board
-    ///<summary>
-    ///<remarks>
+    /// </summary>
+    /// <remarks>
     /// Retrive the current state of the game based on its id
-    ///</remarks>
-    ///<param name="boardId">The unique identifier of the board</param>
-    /// <response> code="200">The game that was stored in the server</response>
-    /// <response> code="400">The game that was send to be loaded is invalid</response>
-    /// <response> code="500">Internal error</response>
+    /// </remarks>
+    /// <param name="boardId">The unique identifier of the board</param>
+    /// <returns>The game that was stored in the server</returns>
+    /// <response code="200">The game that was stored in the server</response>
+    /// <response code="400">The game that was send to be loaded is invalid</response>
+    /// <response code="500">Internal error</response>
     [HttpGet("{boardId}")]
     [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -75,14 +76,18 @@ public class GameOfLifeController : ControllerBase
         return BadRequest(result.ErrorResponse<BoardModel>());
     }
 
-    ///<summary>
-    /// Move to generation
-    ///<summary>
-    ///<remarks>
+    /// <summary>
+    /// Move to generation X
+    /// </summary>
+    /// <remarks>
     /// Advance to a future state based on the desired number
-    ///</remarks>
-    ///<param name="boardId">The unique identifier of the board.</param>
-    ///<param name="statesCount">How many states you want to advance based on the current board</param>
+    /// </remarks>
+    /// <param name="boardId">The unique identifier of the board.</param>
+    /// <param name="statesCount">How many states you want to advance based on the current board</param>
+    /// <returns>The state of the game after being processed the same amout of states that were requested</returns>
+    /// <response code="200">the last state of the board, after being calculated until the statesCount limit that were provided</response>
+    /// <response code="400">The game that was send to be calculated is invalid</response>
+    /// <response code="500">Internal error</response>
     [HttpGet("move_to_generation/{boardId}/{statesCount}")]
     [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -92,13 +97,17 @@ public class GameOfLifeController : ControllerBase
         return Ok();
     }
 
-    ///<summary>
+    /// <summary>
     /// Final move
-    ///<summary>
-    ///<remarks>
+    /// </summary>
+    /// <remarks>
     /// Advance to the last state based on the game
-    ///</remarks>
-    ///<param name="boardId">The unique identifier of the board.</param>
+    /// </remarks>
+    /// <param name="boardId">The unique identifier of the board.</param>
+    /// <returns>The final possible end for the game, after being processed until the calculations limit </returns>
+    /// <response code="200">the last state of the board</response>
+    /// <response code="400">The game that was send to be calculated is invalid</response>
+    /// <response code="500">Internal error</response>
     [HttpGet("final/{boardId}")]
     [ProducesResponseType(typeof(BoardModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -108,16 +117,16 @@ public class GameOfLifeController : ControllerBase
         return Ok();
     }
 
-    ///<summary>
+    /// <summary>
     /// End a game
-    ///<summary>
-    ///<remarks>
+    /// </summary>
+    /// <remarks>
     /// Delete all data related to a game, including the board and its cells
-    ///</remarks>
-    ///<param name="boardId">The unique identifier of the board</param>
-    /// <response> code="200">The total amount of games that were ended in this request</response>
-    /// <response> code="400">The game that was send to be ended is invalid</response>
-    /// <response> code="500">Internal error</response>
+    /// </remarks>
+    /// <param name="boardId">The unique identifier of the board</param>
+    /// <response code="200">The total amount of games that were ended in this request</response>
+    /// <response code="400">The game that was send to be ended is invalid</response>
+    /// <response code="500">Internal error</response>
     [HttpDelete("{boardId}")]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
