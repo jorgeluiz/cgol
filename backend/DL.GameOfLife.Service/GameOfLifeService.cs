@@ -1,23 +1,28 @@
-using System;
 using System.Collections.Concurrent;
+using DL.GameOfLife.Models;
+using DL.GameOfLife.Domain.Common;
 using DL.GameOfLife.Domain.Entities;
+using DL.GameOfLife.Domain.Enums;
+using DL.GameOfLife.Domain.Extensions;
 using DL.GameOfLife.Domain.Interfaces.Services;
 using DL.GameOfLife.Domain.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using AutoMapper;
 
 namespace DL.GameOfLife.Service;
 
 public class GameOfLifeService : IGameOfLifeService
 {
     private readonly ILogger<GameOfLifeService> _logger;
+    private readonly IMapper _mapper;
     private readonly IBoardService _boardService;
     private readonly GameOfLifeOptions _options;
     private readonly int _columnStartOffset;
     private readonly int _columnEndOffset;
     private readonly int _rowEndOffset;
     private readonly int _rowStartOffset;
-    public GameOfLifeService(ILogger<GameOfLifeService> logger, IBoardService boardService, IOptions<GameOfLifeOptions> options)
+    public GameOfLifeService(ILogger<GameOfLifeService> logger, IBoardService boardService, IOptions<GameOfLifeOptions> options, IMapper mapper)
     {
         _logger = logger;
         _boardService = boardService;
@@ -32,11 +37,18 @@ public class GameOfLifeService : IGameOfLifeService
     /// <summary>
     /// Create a new board an generates an boardId
     /// </summary>
-    /// <param name="board">The object containing the new board</param>
+    /// <param name="boardModel">The object containing the new board</param>
     /// <returns>The newly created board</returns>
-    public async Task<Board> NewGame(Board board)
+    public async Task<OperationResult<BoardModel>> NewGame(BoardModel boardModel)
     {
-        return await _boardService.CreateAsync(board);
+        var board = _mapper.Map<Board>(boardModel);
+
+        var created = await _boardService.CreateAsync(board);
+
+        var result = _mapper.Map<BoardModel>(created);
+
+        return OperationResult<BoardModel>.Ok(result);
+
     }
 
     /// <summary>
@@ -44,9 +56,17 @@ public class GameOfLifeService : IGameOfLifeService
     /// </summary>
     /// <param name="boardId">The unique id of a board</param>
     /// <returns>The stored board</returns>
-    public async Task<Board> LoadGame(string boardId)
+    public async Task<OperationResult<BoardModel>> LoadGame(string boardId)
     {
-        return await _boardService.FindByIdAsync(boardId);
+        var board = await _boardService.FindByIdAsync(boardId);
+
+        if (board != null)
+        {
+            var result = _mapper.Map<BoardModel>(board);
+            return OperationResult<BoardModel>.Ok(result);
+        }
+
+        return OperationResult<BoardModel>.NotFound(ErrorCodes.ERR_0002.NewResultError());
     }
 
     /// <summary>
@@ -54,9 +74,16 @@ public class GameOfLifeService : IGameOfLifeService
     /// </summary>
     /// <param name="boardId">The unique id of a board</param>
     /// <returns>Delete all data related to a game</returns>
-    public async Task<long> EndGame(string boardId)
+    public async Task<OperationResult<long>> EndGame(string boardId)
     {
-        return await _boardService.DeleteByIdAsync(boardId);
+        var deleteCount = await _boardService.DeleteByIdAsync(boardId);
+
+        if (deleteCount <= 0)
+        {
+            return OperationResult<long>.Error(ErrorCodes.ERR_0001.NewResultError());
+        }
+
+        return OperationResult<long>.Ok(deleteCount);
     }
 
     /// <summary>

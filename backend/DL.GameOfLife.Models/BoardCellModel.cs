@@ -1,6 +1,4 @@
-using System;
-
-namespace DL.GameOfLife.Api.Models;
+namespace DL.GameOfLife.Models;
 
 public class BoardCellModel
 {
