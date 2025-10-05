@@ -2,6 +2,7 @@
 using AutoMapper;
 using DL.GameOfLife.Api.Mappers;
 using DL.GameOfLife.Extensions.Registers;
+using DL.GameOfLife.Data.Registers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,8 @@ builder.Services.AddSingleton(
 #endregion
 
 #region Registers
-builder.Services.AddServices();
+builder.Services.RegisterServices(builder.Configuration);
+builder.Services.RegisterDataServices(builder.Configuration);
 #endregion
 
 var app = builder.Build();

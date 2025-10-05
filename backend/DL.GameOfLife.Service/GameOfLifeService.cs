@@ -2,7 +2,9 @@ using System;
 using System.Collections.Concurrent;
 using DL.GameOfLife.Domain.Entities;
 using DL.GameOfLife.Domain.Interfaces.Services;
+using DL.GameOfLife.Domain.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace DL.GameOfLife.Service;
 
@@ -10,18 +12,51 @@ public class GameOfLifeService : IGameOfLifeService
 {
     private readonly ILogger<GameOfLifeService> _logger;
     private readonly IBoardService _boardService;
+    private readonly GameOfLifeOptions _options;
     private readonly int _columnStartOffset;
     private readonly int _columnEndOffset;
     private readonly int _rowEndOffset;
     private readonly int _rowStartOffset;
-    public GameOfLifeService(ILogger<GameOfLifeService> logger, IBoardService boardService)
+    public GameOfLifeService(ILogger<GameOfLifeService> logger, IBoardService boardService, IOptions<GameOfLifeOptions> options)
     {
         _logger = logger;
         _boardService = boardService;
-        _columnStartOffset = -1;
-        _columnEndOffset = 1;
-        _rowStartOffset = -1;
-        _rowEndOffset = 1;
+        _options = options.Value;
+
+        _columnStartOffset = _options.ColumnStartOffset;
+        _columnEndOffset = _options.ColumnEndOffset;
+        _rowStartOffset = _options.RowStartOffset;
+        _rowEndOffset = _options.RowEndOffset;
+    }
+
+    /// <summary>
+    /// Create a new board an generates an boardId
+    /// </summary>
+    /// <param name="board">The object containing the new board</param>
+    /// <returns>The newly created board</returns>
+    public async Task<Board> NewGame(Board board)
+    {
+        return await _boardService.CreateAsync(board);
+    }
+
+    /// <summary>
+    /// Load a board an based on a boardId
+    /// </summary>
+    /// <param name="boardId">The unique id of a board</param>
+    /// <returns>The stored board</returns>
+    public async Task<Board> LoadGame(string boardId)
+    {
+        return await _boardService.FindByIdAsync(boardId);
+    }
+
+    /// <summary>
+    /// End a game
+    /// </summary>
+    /// <param name="boardId">The unique id of a board</param>
+    /// <returns>Delete all data related to a game</returns>
+    public async Task<long> EndGame(string boardId)
+    {
+        return await _boardService.DeleteByIdAsync(boardId);
     }
 
     /// <summary>

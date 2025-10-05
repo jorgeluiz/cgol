@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using DL.GameOfLife.Domain.Interfaces.Services;
 using DL.GameOfLife.Service;
 using DL.GameOfLife.Domain.Entities;
+using Microsoft.Extensions.Options;
+using DL.GameOfLife.Domain.Options;
 
 namespace DL.GameOfLife.Tests
 {
@@ -11,13 +13,25 @@ namespace DL.GameOfLife.Tests
         private readonly Mock<ILogger<GameOfLifeService>> _mockLogger;
         private readonly Mock<IBoardService> _mockBoardService;
         private readonly GameOfLifeService _gameOfLifeService;
+        private readonly Mock<IOptions<GameOfLifeOptions>> _options;
 
 
         public GameOfLifeServiceTests()
         {
             _mockLogger = new Mock<ILogger<GameOfLifeService>>();
             _mockBoardService = new Mock<IBoardService>();
-            _gameOfLifeService = new GameOfLifeService(_mockLogger.Object, _mockBoardService.Object);
+            _options = new Mock<IOptions<GameOfLifeOptions>>(); 
+            var mockOptions = new GameOfLifeOptions
+            {
+                ColumnStartOffset = -1,
+                ColumnEndOffset = 1,
+                RowStartOffset = -1,
+                RowEndOffset = 1,
+            };
+
+            _options.Setup(x => x.Value).Returns(mockOptions);
+
+            _gameOfLifeService = new GameOfLifeService(_mockLogger.Object, _mockBoardService.Object, _options.Object);
         }
 
         [Fact(DisplayName = @"Given a valid game to calculate, 
