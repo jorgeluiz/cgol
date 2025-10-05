@@ -18,5 +18,7 @@ public static class ServicesRegister
 
         services.AddScoped<IBoardService, BoardService>();
         services.AddScoped<IGameOfLifeService, GameOfLifeService>();
+
+        services.AddScoped<IGameOfLifeEngineService, GameOfLifeEngineService>();
     }
 }
