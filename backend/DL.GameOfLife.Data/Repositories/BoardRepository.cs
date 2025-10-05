@@ -30,10 +30,13 @@ public class BoardRepository : IBoardRepository
         return await _collection.Find(filters).Limit(1).FirstOrDefaultAsync();
     }
 
-    public async Task RemoveByIdAsync(string boardId)
+    public async Task<long> RemoveByIdAsync(string boardId)
     {
         var filters = Builders<Board>.Filter.Eq(x => x.Id, boardId);
 
-        await _collection.DeleteOneAsync(filters);
+        var result = await _collection.DeleteOneAsync(filters);
+
+        return result.DeletedCount;
+
     }
 }

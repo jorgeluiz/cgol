@@ -6,5 +6,5 @@ public interface IBoardRepository
 {
     Task<Board> InsertAsync(Board board);
     Task<Board> FindByIdAsync(string boardId);
-    Task RemoveByIdAsync(string boardId);
+    Task<long> RemoveByIdAsync(string boardId);
 }

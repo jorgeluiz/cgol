@@ -50,6 +50,16 @@ public class GameOfLifeService : IGameOfLifeService
     }
 
     /// <summary>
+    /// End a game
+    /// </summary>
+    /// <param name="boardId">The unique id of a board</param>
+    /// <returns>Delete all data related to a game</returns>
+    public async Task<long> EndGame(string boardId)
+    {
+        return await _boardService.DeleteByIdAsync(boardId);
+    }
+
+    /// <summary>
     /// The main method that calculates the board states 
     /// </summary>
     /// <param name="currentState">The current state of the board</param>

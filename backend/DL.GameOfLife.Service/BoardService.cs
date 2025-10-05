@@ -22,8 +22,8 @@ public class BoardService : IBoardService
     {
         return await _repository.FindByIdAsync(boardId);
     }
-    public async Task DeleteByIdAsync(string boardId)
+    public async Task<long> DeleteByIdAsync(string boardId)
     {
-        await _repository.RemoveByIdAsync(boardId);
+        return await _repository.RemoveByIdAsync(boardId);
     }
 }

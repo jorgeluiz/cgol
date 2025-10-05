@@ -42,8 +42,8 @@ public class GameOfLifeController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error trying to create a new game");
-            return BadRequest("Error trying to create a new game");
         }
+        return BadRequest("Error trying to create a new game");
 
     }
 
@@ -65,8 +65,8 @@ public class GameOfLifeController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error trying to load the game");
-            return BadRequest("Error trying to load the game");
         }
+        return BadRequest("Invalid boardId");
     }
 
     ///<summary>
@@ -95,6 +95,32 @@ public class GameOfLifeController : ControllerBase
     public ActionResult<BoardModel> GoToFinal(string boardId)
     {
         return Ok();
+    }
+
+    ///<summary>
+    /// End a game
+    ///<summary>
+    ///<remarks>
+    /// Delete all data related to a game, including the board and its cells
+    ///</remarks>
+    ///<param name="boardId">The unique identifier of the board</param>
+    [HttpDelete("{boardId}")]
+    public async Task<IActionResult> Clear(string boardId)
+    {
+        try
+        {
+            var totalDeleted = await _service.EndGame(boardId);
+            if (totalDeleted > 0)
+
+            {
+                return Ok();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error trying to load the game");
+        }
+        return BadRequest("Invalid boarId");
     }
 
 }

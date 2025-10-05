@@ -7,5 +7,5 @@ public interface IBoardService
 {
     Task<Board> CreateAsync(Board board);
     Task<Board> FindByIdAsync(string boardId);
-    Task DeleteByIdAsync(string boardId);
+    Task<long> DeleteByIdAsync(string boardId);
 }
