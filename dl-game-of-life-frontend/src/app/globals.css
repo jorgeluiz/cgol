@@ -24,3 +24,37 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.board-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1px;
+  border: 1px solid wheat;
+  height: 504px;
+  width: 504px;
+}
+
+.board-row {
+  margin: 0;
+  padding: 0;
+  border: none;
+  line-height: 0em;
+  font-size: 0em;
+}
+
+.board-row::after,
+.board-row::before {
+  box-sizing: inherit;
+}
+
+.board-cell {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border: 0;
+}
+
+.board-cell.active {
+  background-color: white;
+}
