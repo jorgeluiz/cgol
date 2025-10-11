@@ -9,7 +9,7 @@ export interface Board {
 export interface BoardCell {
     rowNumber: number;
     columnNumber: number;
-    isActive: boolean
+    isAlive: boolean
 }
 
 export interface RenderBoardCellProps {

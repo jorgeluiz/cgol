@@ -9,6 +9,7 @@ const defaultHeaders = {
 
 async function handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
+        console.log(API_BASE_URL);
         try {
             const errorData: ErrorResponse = await response.json();
             const firstError = errorData.errors?.[0]?.message || `HTTP error! status: ${response.status}`;
