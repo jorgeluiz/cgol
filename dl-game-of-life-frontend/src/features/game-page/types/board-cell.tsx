@@ -1,6 +1,6 @@
 export interface BoardCell {
     rowNumber: number;
-    cellNumber: number;
+    columnNumber: number;
     isActive: boolean
 }
 

@@ -6,9 +6,9 @@ import Cell from "@/features/game-page/components/cell";
 export const renderCells = ({ rowNumber, totalColumns }: RenderBoardCellProps): ReactNode => {
     return (
         <>
-            {Array.from({ length: totalColumns }, (_, cellIndex) => {
+            {Array.from({ length: totalColumns }, (_, columnIndex) => {
                 let initialIsActive: boolean = false;
-                return <Cell key={`${rowNumber}-${cellIndex}`} rowNumber={rowNumber} cellNumber={cellIndex} isActive={initialIsActive} />;
+                return <Cell key={`${rowNumber}-${columnIndex}`} rowNumber={rowNumber} columnNumber={columnIndex} isActive={initialIsActive} />;
             })}
         </>
     );
