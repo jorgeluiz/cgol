@@ -1,25 +1,25 @@
 import { ReactNode } from "react";
 
 import { RenderBoardCellProps } from "@/features/game-page/types/board-cell";
-import BoardCell from "@/features/game-page/components/board-cell";
+import Cell from "@/features/game-page/components/cell";
 
-export const renderCells = ({ rowNumber, cellsNumber }: RenderBoardCellProps): ReactNode => {
+export const renderCells = ({ rowNumber, totalColumns }: RenderBoardCellProps): ReactNode => {
     return (
         <>
-            {Array.from({ length: cellsNumber }, (_, cellIndex) => {
+            {Array.from({ length: totalColumns }, (_, cellIndex) => {
                 let initialIsActive: boolean = false;
-                return <BoardCell key={`${rowNumber}-${cellIndex}`} rowNumber={rowNumber} cellIndex={cellIndex} initialIsActive={initialIsActive} />;
+                return <Cell key={`${rowNumber}-${cellIndex}`} rowNumber={rowNumber} cellNumber={cellIndex} isActive={initialIsActive} />;
             })}
         </>
     );
 }
 
-export const renderRows = (rowNumber: number): ReactNode => {
+export const renderRows = (totalRows: number, totalColumns: number): ReactNode => {
     return (
         <>
-            {Array.from({ length: rowNumber }, (_, index) => (
+            {Array.from({ length: totalRows }, (_, index) => (
                 <div key={index} className="board-row">
-                    {renderCells({ rowNumber: index, cellsNumber: 50 })}
+                    {renderCells({ rowNumber: index, totalColumns: totalColumns })}
                 </div>
             ))}
         </>

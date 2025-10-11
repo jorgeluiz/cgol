@@ -1,10 +1,10 @@
-export interface BoardCellProps {
+export interface BoardCell {
     rowNumber: number;
-    cellIndex: number;
-    initialIsActive: boolean
+    cellNumber: number;
+    isActive: boolean
 }
 
 export interface RenderBoardCellProps {
     rowNumber: number;
-    cellsNumber: number;
+    totalColumns: number;
 }
