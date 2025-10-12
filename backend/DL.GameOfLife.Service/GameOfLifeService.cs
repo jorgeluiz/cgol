@@ -30,7 +30,7 @@ public class GameOfLifeService : IGameOfLifeService
 
     #region Basic actions
     /// <summary>
-    /// Create a new board an generates an boardId
+    /// Create a new board and generates an boardId
     /// </summary>
     /// <param name="boardModel">The object containing the new board</param>
     /// <returns>The newly created board</returns>
@@ -44,6 +44,21 @@ public class GameOfLifeService : IGameOfLifeService
 
         return OperationResult<BoardModelResponse>.Ok(result);
 
+    }
+    /// <summary>
+    /// Update an existing board
+    /// </summary>
+    /// <param name="boardModel">The object containing an existing board</param>
+    /// <returns>The updated board</returns>
+    public async Task<OperationResult<BoardModelResponse>> UpdateGame(UpdateBoardModelRequest boardModel)
+    {
+        var board = _mapper.Map<Board>(boardModel);
+
+        var created = await _boardService.UpdateCellsAsync(board);
+
+        var result = _mapper.Map<BoardModelResponse>(created);
+        
+        return OperationResult<BoardModelResponse>.Ok(result);
     }
 
     /// <summary>

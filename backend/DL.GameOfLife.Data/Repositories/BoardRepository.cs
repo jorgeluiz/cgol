@@ -23,6 +23,23 @@ public class BoardRepository : IBoardRepository
         return board;
 
     }
+
+    public async Task<Board> UpdateCellsAsync(Board board)
+    {
+        var filter = Builders<Board>.Filter.Eq(d => d.Id, board.Id);
+        var update = Builders<Board>.Update.Set(d => d.Cells, board.Cells);
+
+        var options = new FindOneAndUpdateOptions<Board>
+        {
+            IsUpsert = true,
+            ReturnDocument = ReturnDocument.After
+        };
+
+        var result = await _collection.FindOneAndUpdateAsync(filter, update, options);
+
+        return board;
+
+    }
     public async Task<Board> FindByIdAsync(string boardId)
     {
         var filters = Builders<Board>.Filter.Eq(x => x.Id, boardId);

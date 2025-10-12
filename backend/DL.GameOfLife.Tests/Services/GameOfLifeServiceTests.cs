@@ -60,6 +60,30 @@ namespace DL.GameOfLife.Tests
             _mockBoardService.Verify(s => s.CreateAsync(It.IsAny<Board>()), Times.Once);
         }
 
+        [Fact(DisplayName = @"Given a valid existing board request,
+        when UpdateGame is called,
+        then it should update the board and return the mapped response")]
+        public async Task UpdateGame_ShouldUpdateAndReturnBoard_WhenCalled()
+        {
+            // Arrange
+            var request = new UpdateBoardModelRequest{Id = "board-y"};
+            var boardEntity = new Board();
+            var updatedBoardEntity = new Board { Id = "board-y" };
+            var expectedResponse = new BoardModelResponse { Id = "board-y" };
+
+            _mockMapper.Setup(m => m.Map<Board>(request)).Returns(boardEntity);
+            _mockBoardService.Setup(s => s.UpdateCellsAsync(boardEntity)).ReturnsAsync(updatedBoardEntity);
+            _mockMapper.Setup(m => m.Map<BoardModelResponse>(updatedBoardEntity)).Returns(expectedResponse);
+
+            // Act
+            var result = await _gameOfLifeService.UpdateGame(request);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal(expectedResponse, result.Model);
+            _mockBoardService.Verify(s => s.UpdateCellsAsync(It.IsAny<Board>()), Times.Once);
+        }
+
         [Fact(DisplayName = @"Given an ID for an existing board,
         when LoadGame is called, 
         then it should find and return the board")]

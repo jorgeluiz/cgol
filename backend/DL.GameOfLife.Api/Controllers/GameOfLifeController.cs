@@ -3,6 +3,7 @@ using DL.GameOfLife.Models;
 using DL.GameOfLife.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using DL.GameOfLife.Api.ErrorHandling;
+using DL.GameOfLife.Domain.Enums;
 namespace DL.GameOfLife.Api.Controllers;
 
 [ApiController]
@@ -39,6 +40,42 @@ public class GameOfLifeController : ControllerBase
     public async Task<IActionResult> Create([FromBody] BoardModelRequest newBoard)
     {
         var result = await _service.NewGame(newBoard);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Model);
+        }
+
+        return BadRequest(result.ErrorResponse());
+
+    }
+
+    /// <summary>
+    /// Updates a board
+    /// </summary>
+    /// <remarks>
+    /// Update the current state of the game and returns the uptaded values.
+    /// </remarks>
+    /// <param name="boardId">The unique identifier of the board.</param>
+    /// <param name="board">An object that represents the initial state of the game.</param>
+    /// <returns>The updated game.</returns>
+    /// <response code="200">The game was successfully updated.</response>
+    /// <response code="400">The provided game is invalid.</response>
+    /// <response code="500">An internal error occurred.</response>
+    [HttpPut("{boardId}")]
+    [ProducesResponseType(typeof(BoardModelResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Update([FromRoute] string boardId, [FromBody] UpdateBoardModelRequest board)
+    {
+
+        if (boardId != board.Id)
+        {
+            var errorResponse = new ErrorResponse(ErrorCodes.ERR_0001);
+            return BadRequest(errorResponse);
+        }
+
+        var result = await _service.UpdateGame(board);
 
         if (result.IsSuccess)
         {

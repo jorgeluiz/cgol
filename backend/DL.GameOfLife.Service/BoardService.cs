@@ -18,6 +18,11 @@ public class BoardService : IBoardService
         return await _repository.InsertAsync(board);
     }
 
+    public async Task<Board> UpdateCellsAsync(Board board)
+    {
+        return await _repository.UpdateCellsAsync(board);
+    }
+
     public async Task<Board> FindByIdAsync(string boardId)
     {
         return await _repository.FindByIdAsync(boardId);
