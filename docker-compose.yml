@@ -7,8 +7,9 @@ services:
     ports:
       - "5217:5217"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - MongoDbOptions__ConnectionString=mongodb://root:root@database:27017/cgol?authSource=admin&authMechanism=SCRAM-SHA-1
+      - MongoDbOptions__DatabaseName=cgol
     depends_on:
       - database
   database:
@@ -19,9 +20,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: cgol
     volumes:
       - cgol_mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
 
 volumes:
   cgol_mongodb_data:
