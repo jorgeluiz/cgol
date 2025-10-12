@@ -8,7 +8,6 @@ import { createGame, updateGame, deleteGame, getNextState, getBoardState, increm
 import { useGameStore } from "@/stores/game-store";
 
 export const useGameActions = () => {
-    const currentGame = useGameStore((state) => state.board);
     const save = useGameStore((state) => state.save);
     const clear = useGameStore((state) => state.clear);
 
@@ -30,7 +29,17 @@ export const useGameActions = () => {
 
     }
 
+    const saveCurrentState = async () => {
+        const currentGame = useGameStore.getState().board;
+
+        if (currentGame?.id) {
+            await updateGame({ id: currentGame.id, cells: currentGame.cells });
+        }
+    }
+
     const nextStage = async () => {
+        const currentGame = useGameStore.getState().board;
+
         if (currentGame?.id) {
             const nextStage = await getNextState(currentGame.id);
             if (nextStage.cells) {
@@ -46,6 +55,8 @@ export const useGameActions = () => {
     }
 
     const finishGame = async () => {
+        const currentGame = useGameStore.getState().board;
+        
         if (currentGame?.id) {
             await deleteGame(currentGame?.id);
             clear();
@@ -53,5 +64,5 @@ export const useGameActions = () => {
     }
 
 
-    return { newGame, nextStage, finishGame }
+    return { newGame, saveCurrentState, nextStage, finishGame }
 }

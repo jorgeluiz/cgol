@@ -4,11 +4,12 @@ import React, { FC } from 'react';
 import { BaseBoardCell, BoardCell } from "@/features/game-page/types/board";
 
 import { useGameStore } from "@/stores/game-store";
-
+import { useGameActions } from "@/hooks/game-hooks";
 
 const Cell: FC<BaseBoardCell> = ({ rowNumber, columnNumber }) => {
-
+    const { saveCurrentState } = useGameActions();
     const saveBoardCell = useGameStore((state) => state.saveBoardCell);
+    const setIsBoardLocked = useGameStore((state) => state.setIsBoardLocked);
 
     const board = useGameStore(
         (state) => state.board,
@@ -18,14 +19,22 @@ const Cell: FC<BaseBoardCell> = ({ rowNumber, columnNumber }) => {
 
     const isAlive = cell?.isAlive || false;
 
-    const toggle = () => {
-        let newStatus = !isAlive;
-        let newCell: BoardCell = { rowNumber: rowNumber, columnNumber: columnNumber, isAlive: newStatus };
-        saveBoardCell(newCell);
+    const handleToggle = async () => {
+        const isBoardLocked = useGameStore.getState().isBoardLocked;
+        if (!isBoardLocked) {
+            setIsBoardLocked(true);
+
+            let newStatus = !isAlive;
+            let newCell: BoardCell = { rowNumber: rowNumber, columnNumber: columnNumber, isAlive: newStatus };
+            saveBoardCell(newCell);
+            await saveCurrentState();
+
+            setIsBoardLocked(false);
+        }
     }
 
     return (
-        <div className={`board-cell ${isAlive ? 'active' : ''}`} onClick={toggle}></div>
+        <div className={`board-cell ${isAlive ? 'active' : ''}`} onClick={handleToggle}></div>
     );
 }
 

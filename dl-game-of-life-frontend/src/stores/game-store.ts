@@ -29,7 +29,10 @@ export const useGameStore = create<GameState>((set) => ({
     board: null,
     boardTotalRows: null,
     boardTotalColumns: null,
+    isBoardLocked: false,
+    areActionsLocked: false,
     save: (newBoard, boardTotalRows, boardTotalColumns) => set({ board: newBoard, boardTotalColumns: boardTotalColumns, boardTotalRows: boardTotalRows }),
     saveBoardCell: (cell: BoardCell) => handleSavecell(cell, set),
-    clear: () => set({ board: null, boardTotalColumns: null, boardTotalRows: null }),
+    setIsBoardLocked: (isBoardLocked: boolean) => set({ isBoardLocked: isBoardLocked }),
+    clear: () => set({ board: null, boardTotalColumns: null, boardTotalRows: null, isBoardLocked: false }),
 }));

@@ -15,11 +15,6 @@ export interface BoardCell extends BaseBoardCell {
     isAlive: boolean
 }
 
-export interface RenderBoardCellProps {
-    rowNumber: number;
-    totalColumns: number;
-}
-
 export interface BoardRequest {
     cells: BoardCell[] | null;
 }
