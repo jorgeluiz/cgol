@@ -3,7 +3,7 @@ import { GameSettings } from "@/constants/game-settings";
 
 
 import { newBoard } from "@/features/game-page/actions/game-actions";
-import { createGame, deleteGame, getNextState, getBoardState, incrementState } from "@/services/game-service";
+import { createGame, updateGame, deleteGame, getNextState, getBoardState, incrementState } from "@/services/game-service";
 
 import { useGameStore } from "@/stores/game-store";
 
@@ -42,9 +42,7 @@ export const useGameActions = () => {
 
                 save(newBoard, lastCell.rowNumber, lastCell.columnNumber);
             }
-
         }
-
     }
 
     const finishGame = async () => {

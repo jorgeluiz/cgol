@@ -1,18 +1,31 @@
 "use client";
 
-import React, { useState, FC } from 'react';
-import { BoardCell } from "@/features/game-page/types/board-cell";
+import React, { FC } from 'react';
+import { BaseBoardCell, BoardCell } from "@/features/game-page/types/board";
 
-const Cell: FC<BoardCell> = ({ rowNumber, cellNumber, isActive = false }) => {
+import { useGameStore } from "@/stores/game-store";
 
-    const [cellIsActive, setActive] = useState<boolean>(isActive);
+
+const Cell: FC<BaseBoardCell> = ({ rowNumber, columnNumber }) => {
+
+    const saveBoardCell = useGameStore((state) => state.saveBoardCell);
+
+    const board = useGameStore(
+        (state) => state.board,
+    );
+
+    const cell = board?.cells.find(c => c.rowNumber === rowNumber && c.columnNumber === columnNumber);
+
+    const isAlive = cell?.isAlive || false;
 
     const toggle = () => {
-        setActive(!cellIsActive);
+        let newStatus = !isAlive;
+        let newCell: BoardCell = { rowNumber: rowNumber, columnNumber: columnNumber, isAlive: newStatus };
+        saveBoardCell(newCell);
     }
 
     return (
-        <div className={`board-cell ${cellIsActive ? 'active' : ''}`} onClick={toggle}></div>
+        <div className={`board-cell ${isAlive ? 'active' : ''}`} onClick={toggle}></div>
     );
 }
 

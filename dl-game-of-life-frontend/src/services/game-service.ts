@@ -19,7 +19,7 @@ export const createGame = (initialState: BoardRequest): Promise<BoardResponse> =
  * Update the current board state
  * GET /{boardId}
  */
-export const updateBoardState = (board: UpdateBoardRequest): Promise<BoardResponse> => {
+export const updateGame = (board: UpdateBoardRequest): Promise<BoardResponse> => {
   return put<BoardResponse, UpdateBoardRequest>(`${baseRoute}/${board.id}`, board);
 };
 

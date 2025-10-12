@@ -6,9 +6,12 @@ export interface Board {
     cells: Array<BoardCell>
 }
 
-export interface BoardCell {
+export interface BaseBoardCell {
     rowNumber: number;
     columnNumber: number;
+}
+
+export interface BoardCell extends BaseBoardCell {
     isAlive: boolean
 }
 
