@@ -5,19 +5,18 @@ The goal of this project is implement [Conway's Game of Life on Wikipedia](https
 C# (Backend)
 MongoDB (Database)
 React/NextJS (Frontend)
-
 Docker
 
-## How to use
+## How to run the project
 This project could run locally with docker compose. At the root folder, run the following commands depending on the desired behavior
 
-### Replicates a Production Envioroment
+**PROD**
 ```
 docker compose up
 ```
 Then access `http://localhost:3000` at your browser
 
-### Simulate a DEV Envioroment
+**DEV**
 ```
 docker-compose -f docker-compose.dev.yml up
 ```
@@ -29,7 +28,7 @@ You will need to run a `React` server, so, in another command terminal, go to th
 npm run dev
 ```
 
-### Full DEV Envioroment (provide an database only for front/back development)
+**Database only**
 ```
 docker-compose -f docker-compose.dev.yml up database
 ```
