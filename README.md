@@ -16,8 +16,6 @@ docker compose up
 ```
 Then access `http://localhost:3000` at your browser
 <br />
-<br />
-<br />
 
 **- DEV**
 ```
@@ -31,8 +29,6 @@ You will need to run a `React` server, so, in another command terminal, go to th
 npm run dev
 ```
 <br />
-<br />
-<br />
 
 **- Database only**
 ```
@@ -44,7 +40,7 @@ All that this command do its to provide a MongoDB, so, you have to start the bac
 For the backend, use the `Debug mode` of your desired tool, or run `dotnet run debug` at any command line tool. To the frontend, execute the  `npm run dev` command.
 <br />
 <br />
-<br />
+
 ## Test commands
 Certify that you are in the  `backend` folder and have `reportgenerator` installed on your computer
 If you dont have it installed run the following code
