@@ -1,5 +1,5 @@
-import { BoardRequest, BoardResponse } from "@/features/game-page/types/board";
-import { post, get, deleteRequest } from "@/utils/api";
+import { BoardRequest, BoardResponse, UpdateBoardRequest } from "@/features/game-page/types/board";
+import { post, put, get, deleteRequest } from "@/utils/api";
 
 
 //API Controller
@@ -16,7 +16,15 @@ export const createGame = (initialState: BoardRequest): Promise<BoardResponse> =
 };
 
 /**
- * Load board current state
+ * Update the current board state
+ * GET /{boardId}
+ */
+export const updateBoardState = (board: UpdateBoardRequest): Promise<BoardResponse> => {
+  return put<BoardResponse, UpdateBoardRequest>(`${baseRoute}/${board.id}`, board);
+};
+
+/**
+ * Load the current board state
  * GET /{boardId}
  */
 export const getBoardState = (boardId: string): Promise<BoardResponse> => {

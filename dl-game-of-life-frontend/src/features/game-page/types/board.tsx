@@ -21,6 +21,11 @@ export interface BoardRequest {
     cells: BoardCell[] | null;
 }
 
+export interface UpdateBoardRequest {
+    id: string;
+    cells: BoardCell[] | null;
+}
+
 export interface BoardResponse {
     id: string | null;
     parentId: string | null;
