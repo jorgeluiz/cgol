@@ -10,13 +10,15 @@ Docker
 ## How to run the project
 This project could run locally with docker compose. At the root folder, run the following commands depending on the desired behavior
 
-**PROD**
+**- PROD**
 ```
 docker compose up
 ```
 Then access `http://localhost:3000` at your browser
 
-**DEV**
+
+
+**- DEV**
 ```
 docker-compose -f docker-compose.dev.yml up
 ```
@@ -28,7 +30,9 @@ You will need to run a `React` server, so, in another command terminal, go to th
 npm run dev
 ```
 
-**Database only**
+
+
+**- Database only**
 ```
 docker-compose -f docker-compose.dev.yml up database
 ```
@@ -38,14 +42,18 @@ All that this command do its to provide a MongoDB, so, you have to start the bac
 For the backend, use the `Debug mode` of your desired tool, or run `dotnet run debug` at any command line tool. To the frontend, execute the  `npm run dev` command.
 
 
+
+
 ## Test commands
 Certify that you are in the  `backend` folder and have `reportgenerator` installed on your computer
 If you dont have it installed run the following code
+
 ```
 dotnet tool install -g dotnet-reportgenerator-globaltool
 ```
 
 After that, run the following commands
+
 ```
 dotnet test --collect:"XPlat Code Coverage"
 dotnet reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:coveragereport" -reporttypes:Html
