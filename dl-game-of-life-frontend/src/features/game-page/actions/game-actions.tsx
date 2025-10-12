@@ -7,7 +7,7 @@ export const newBoard = (): Board => {
 
     Array.from({ length: GameSettings.BOARD_MAX_ROWS }, (_r, rowIndex) => {
         Array.from({ length: GameSettings.BOARD_MAX_COLUMNS }, (_c, columnIndex) => {
-            board.cells.push({ columnNumber: columnIndex, rowNumber: rowIndex, isActive: false });
+            board.cells.push({ columnNumber: columnIndex, rowNumber: rowIndex, isAlive: false });
         });
     });
 

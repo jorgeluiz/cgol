@@ -8,6 +8,22 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+#region CROS policy
+var specificOriginspolicy = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: specificOriginspolicy,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000") // Permite a origem do seu app Next.js
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
+#endregion
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -58,5 +74,9 @@ app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
+
+//CORS config
+app.UseCors(specificOriginspolicy);
+
 
 app.Run();
