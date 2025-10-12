@@ -2,9 +2,9 @@
 The goal of this project is implement [Conway's Game of Life on Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 
 ## Technologies used
-C# (Backend)
-MongoDB (Database)
-React/NextJS (Frontend)
+C# (Backend) \
+MongoDB (Database) \
+React/NextJS (Frontend) \
 Docker
 
 ## How to run the project
@@ -15,7 +15,7 @@ This project could run locally with docker compose. At the root folder, run the 
 docker compose up
 ```
 Then access `http://localhost:3000` at your browser
-<br />
+\
 
 **- DEV**
 ```
@@ -28,7 +28,7 @@ You will need to run a `React` server, so, in another command terminal, go to th
 ```
 npm run dev
 ```
-<br />
+\
 
 **- Database only**
 ```
@@ -38,8 +38,8 @@ docker-compose -f docker-compose.dev.yml up database
 All that this command do its to provide a MongoDB, so, you have to start the backend startup project at `backend/DL.GameOfLife.Api/` and the front and at `dl-game-of-life-frontend` folders
 
 For the backend, use the `Debug mode` of your desired tool, or run `dotnet run debug` at any command line tool. To the frontend, execute the  `npm run dev` command.
-<br />
-<br />
+\
+\
 
 ## Test commands
 Certify that you are in the  `backend` folder and have `reportgenerator` installed on your computer
