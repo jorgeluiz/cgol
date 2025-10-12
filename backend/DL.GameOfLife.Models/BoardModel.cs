@@ -5,6 +5,11 @@ public class BoardModelRequest
     public List<BoardCellModel> Cells { get; set; } = new();
 }
 
+public class UpdateBoardModelRequest : BoardModelRequest
+{
+    public required string Id { get; set; }
+}
+
 public class BoardModelResponse
 {
     public string? Id { get; set; } = string.Empty;
