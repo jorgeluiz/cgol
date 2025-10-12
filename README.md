@@ -18,6 +18,7 @@ Then access `http://localhost:3000` at your browser
 <br />
 <br />
 <br />
+
 **- DEV**
 ```
 docker-compose -f docker-compose.dev.yml up
@@ -32,6 +33,7 @@ npm run dev
 <br />
 <br />
 <br />
+
 **- Database only**
 ```
 docker-compose -f docker-compose.dev.yml up database
