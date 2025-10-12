@@ -7,9 +7,9 @@ services:
     ports:
       - "5217:5217"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - MongoDbOptions__ConnectionString=mongodb://root:root@database:27017/cgol?authSource=admin&authMechanism=SCRAM-SHA-1
-      - MongoDbOptions__DatabaseName=cgol
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDbOptions__ConnectionString=mongodb://root:root@database:27017/cgol_dev?authSource=admin&authMechanism=SCRAM-SHA-1
+      - MongoDbOptions__DatabaseName=cgol_dev
     depends_on:
       - database
   database:

@@ -36,6 +36,14 @@ export const post = <TResponse, TRequest>(uri: string, data: TRequest): Promise<
     }).then(response => handleResponse<TResponse>(response));
 };
 
+export const put = <TResponse, TRequest>(uri: string, data: TRequest): Promise<TResponse> => {
+    return fetch(`${API_BASE_URL}${uri}`, {
+        method: 'PUT',
+        headers: defaultHeaders,
+        body: JSON.stringify(data),
+    }).then(response => handleResponse<TResponse>(response));
+};
+
 export const deleteRequest = <TResponse>(uri: string): Promise<TResponse> => {
     return fetch(`${API_BASE_URL}${uri}`, {
         method: 'DELETE',

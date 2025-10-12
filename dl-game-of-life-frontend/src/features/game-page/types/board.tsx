@@ -6,18 +6,21 @@ export interface Board {
     cells: Array<BoardCell>
 }
 
-export interface BoardCell {
+export interface BaseBoardCell {
     rowNumber: number;
     columnNumber: number;
+}
+
+export interface BoardCell extends BaseBoardCell {
     isAlive: boolean
 }
 
-export interface RenderBoardCellProps {
-    rowNumber: number;
-    totalColumns: number;
+export interface BoardRequest {
+    cells: BoardCell[] | null;
 }
 
-export interface BoardRequest {
+export interface UpdateBoardRequest {
+    id: string;
     cells: BoardCell[] | null;
 }
 

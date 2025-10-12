@@ -1,18 +1,40 @@
 "use client";
 
-import React, { useState, FC } from 'react';
-import { BoardCell } from "@/features/game-page/types/board-cell";
+import React, { FC } from 'react';
+import { BaseBoardCell, BoardCell } from "@/features/game-page/types/board";
 
-const Cell: FC<BoardCell> = ({ rowNumber, cellNumber, isActive = false }) => {
+import { useGameStore } from "@/stores/game-store";
+import { useGameActions } from "@/hooks/game-hooks";
 
-    const [cellIsActive, setActive] = useState<boolean>(isActive);
+const Cell: FC<BaseBoardCell> = ({ rowNumber, columnNumber }) => {
+    const { saveCurrentState } = useGameActions();
+    const saveBoardCell = useGameStore((state) => state.saveBoardCell);
+    const setIsBoardLocked = useGameStore((state) => state.setIsBoardLocked);
 
-    const toggle = () => {
-        setActive(!cellIsActive);
+    const board = useGameStore(
+        (state) => state.board,
+    );
+
+    const cell = board?.cells.find(c => c.rowNumber === rowNumber && c.columnNumber === columnNumber);
+
+    const isAlive = cell?.isAlive || false;
+
+    const handleToggle = async () => {
+        const isBoardLocked = useGameStore.getState().isBoardLocked;
+        if (!isBoardLocked) {
+            setIsBoardLocked(true);
+
+            let newStatus = !isAlive;
+            let newCell: BoardCell = { rowNumber: rowNumber, columnNumber: columnNumber, isAlive: newStatus };
+            saveBoardCell(newCell);
+            await saveCurrentState();
+
+            setIsBoardLocked(false);
+        }
     }
 
     return (
-        <div className={`board-cell ${cellIsActive ? 'active' : ''}`} onClick={toggle}></div>
+        <div className={`board-cell ${isAlive ? 'active' : ''}`} onClick={handleToggle}></div>
     );
 }
 
