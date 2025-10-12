@@ -12,10 +12,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
         console.log(API_BASE_URL);
         try {
             const errorData: ErrorResponse = await response.json();
-            const firstError = errorData.errors?.[0]?.message || `HTTP error! status: ${response.status}`;
+            const firstError = errorData.errors?.[0]?.message || `Communication error: ${response.status}`;
             throw new Error(firstError);
         } catch (e) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Communication error: ${response.status}`);
         }
     }
     return response.json() as Promise<T>;
