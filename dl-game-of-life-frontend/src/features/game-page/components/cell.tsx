@@ -24,8 +24,8 @@ const Cell: FC<BaseBoardCell> = ({ rowNumber, columnNumber }) => {
         if (!isBoardLocked) {
             setIsBoardLocked(true);
 
-            let newStatus = !isAlive;
-            let newCell: BoardCell = { rowNumber: rowNumber, columnNumber: columnNumber, isAlive: newStatus };
+            const newStatus = !isAlive;
+            const newCell: BoardCell = { rowNumber: rowNumber, columnNumber: columnNumber, isAlive: newStatus };
             saveBoardCell(newCell);
             await saveCurrentState();
 

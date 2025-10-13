@@ -75,7 +75,7 @@ export const useGameActions = () => {
     const stopAutoPlay = useCallback(() => setIsAutoPlaying(false), [setIsAutoPlaying]);
 
     const newGame = useCallback(async () => {
-        let board: Board = newBoard();
+        const board: Board = newBoard();
         const createdGame = await createGame({ cells: board.cells });
         if (createdGame.id) {
             board.id = createdGame.id;
