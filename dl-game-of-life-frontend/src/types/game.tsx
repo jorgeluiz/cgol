@@ -5,8 +5,10 @@ export interface GameState {
     boardTotalRows: number | null;
     boardTotalColumns: number | null;
     isBoardLocked: boolean;
+    isAutoPlaying: boolean;
     save: (board: Board, totalColumns: number, totalRows: number) => void;
     setIsBoardLocked: (isBoardLocked: boolean) => void;
+    setIsAutoPlaying: (isAutoPlaying: boolean) => void;
     saveBoardCell: (cell: BoardCell) => void;
     clear: () => void;
 }
