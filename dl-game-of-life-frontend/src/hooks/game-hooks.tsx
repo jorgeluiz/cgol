@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback } from "react";
 import { Board, BoardCell } from "@/features/game-page/types/board";
 import { GameSettings } from "@/constants/game-settings";
 import { newBoard } from "@/features/game-page/actions/game-actions";
-import { createGame, updateGame, deleteGame, getNextState } from "@/services/game-service";
+import { createGame, updateGame, deleteGame, getNextState, incrementState } from "@/services/game-service";
 import { useGameStore } from "@/stores/game-store";
 
 export const useGameActions = () => {
@@ -12,7 +12,7 @@ export const useGameActions = () => {
     const clear = useGameStore(state => state.clear);
     const save = useGameStore(state => state.save);
 
-    const nextStage = useCallback(async () => {
+    const nextState = useCallback(async () => {
         const board = useGameStore.getState().board;
         const setIsBoardLocked = useGameStore.getState().setIsBoardLocked;
 
@@ -33,17 +33,40 @@ export const useGameActions = () => {
         }
     }, [save, setIsAutoPlaying]);
 
-    const latestNextStage = useRef(nextStage);
+
+    const fastForward = useCallback(async (increment: number) => {
+        const board = useGameStore.getState().board;
+        const setIsBoardLocked = useGameStore.getState().setIsBoardLocked;
+
+        if (!board?.id || useGameStore.getState().isBoardLocked) return;
+
+        setIsBoardLocked(true);
+        try {
+            const nextStageData = await incrementState(board.id, increment);
+            if (nextStageData?.cells) {
+                const newBoard: Board = { id: nextStageData.id, cells: nextStageData.cells };
+                save(newBoard, GameSettings.BOARD_MAX_ROWS, GameSettings.BOARD_MAX_COLUMNS);
+            }
+        } catch (error) {
+            console.error("Erro ao buscar próximo estado:", error);
+            setIsAutoPlaying(false);
+        } finally {
+            setIsBoardLocked(false);
+        }
+    }, [save, setIsAutoPlaying]);
+
+
+    const latestNextState = useRef(nextState);
     useEffect(() => {
-        latestNextStage.current = nextStage;
-    }, [nextStage]);
+        latestNextState.current = nextState;
+    }, [nextState]);
 
     useEffect(() => {
         if (!isAutoPlaying) {
             return;
         }
         const interval = setInterval(() => {
-            latestNextStage.current();
+            latestNextState.current();
         }, 1000);
         return () => clearInterval(interval);
     }, [isAutoPlaying]);
@@ -82,7 +105,8 @@ export const useGameActions = () => {
     return {
         newGame,
         saveCurrentState,
-        nextStage,
+        nextState,
+        fastForward,
         finishGame,
         startAutoPlay,
         stopAutoPlay
