@@ -1,8 +1,23 @@
 services:
+  frontend:
+    build:
+      context: ./dl-game-of-life-frontend
+      dockerfile: Dockerfile
+    image: cgol-frontend-image
+    container_name: cgol-frontend-container
+    ports:
+      - "3000:3000"
+    environment:     
+      - NEXT_PUBLIC_API_URL=http://backend:5217
+    depends_on:
+      - backend
+    networks:
+      - cgol-network
   backend:
-    build: 
+    build:
       context: .
       dockerfile: ./backend/DL.GameOfLife.Api/Dockerfile
+    image: cgol-backend-image
     container_name: cgol-backend-container
     ports:
       - "5217:5217"
@@ -12,17 +27,27 @@ services:
       - MongoDbOptions__DatabaseName=cgol
     depends_on:
       - database
+    networks:
+      - cgol-network
+
   database:
     image: mongo:latest
     container_name: cgol-mongodb-container
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
     volumes:
       - cgol_mongodb_data:/data/db
       - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - cgol-network
+
+networks:
+  cgol-network:
+    driver: bridge
+
 
 volumes:
   cgol_mongodb_data:
