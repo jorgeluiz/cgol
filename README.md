@@ -47,16 +47,17 @@ Once everything is running, open your browser and go to:
 
 ---
 
-###  Option 2 — Development Mode (for local coding)
+###  Option 2 — FrontEnd Development Mode (for local coding)
 
 ```bash
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-This mode enables **live reload** for backend and frontend.
+In this mode an API and Database will be provided in containers
 
 - Swagger (backend API docs): [http://localhost:5217/swagger/index.html](http://localhost:5217/swagger/index.html)  
-- To start the frontend manually:
+
+- You will have to start the frontend manually:
   ```bash
   cd dl-game-of-life-frontend
   npm install
@@ -69,7 +70,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ### Option 3 — Run only MongoDB
 
-If you want to run the backend and frontend manually:
+Use this mode if you want to run the backend and frontend manually:
 
 ```bash
 docker compose -f docker-compose.dev.yml up database
