@@ -1,59 +1,134 @@
-# Implementation of Conway's Game Of Life
-The goal of this project is to implement [Conway's Game of Life on Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
+# 🧬 Conway’s Game of Life  
+* Full-stack implementation with .NET, React, MongoDB and Docker.*
 
-## Technologies used
-C# (Backend) 
-MongoDB (Database) 
-React/NextJS (Frontend) 
-Docker
+[![.NET](https://img.shields.io/badge/.NET-7.0-blue)](https://dotnet.microsoft.com/)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![MongoDB](https://img.shields.io/badge/MongoDB-7.0-brightgreen)
+![Docker](https://img.shields.io/badge/Docker-ready-blue)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-## How to run the project
-This project could run locally with docker compose. At the root folder, run the following commands depending on the desired behavior
+---
 
-**- PROD**
+## Overview
+
+This project implements **Conway’s Game of Life**, a zero-player cellular automaton where cells evolve based on simple rules of life and death.  
+It demonstrates **clean architecture practices** with a **.NET backend**, **React/Next.js frontend**, **MongoDB** persistence, and **Docker** for easy orchestration.
+
+---
+
+## Project Structure
+
+```bash
+.
+├── backend/
+│   ├── DL.GameOfLife.Api/           # .NET Web API
+│   ├── DL.GameOfLife.Tests/         # Unit tests
+│   └── ...
+├── dl-game-of-life-frontend/        # React / Next.js frontend
+├── docker-compose.yml               # Production setup
+├── docker-compose.dev.yml           # Development setup
+└── README.md
 ```
-docker compose up
-```
-Then access `http://localhost:3000` at your browser
 
+---
 
-**- DEV**
-```
-docker-compose -f docker-compose.dev.yml up
+##  Running the Project
+
+###  Option 1 — Production Mode (recommended for demo)
+
+```bash
+docker compose up --build
 ```
 
-A swagger will be available at `http://localhost:5217/swagger/index.html`
+This will start the **frontend**, **backend**, and **MongoDB** containers.  
+Once everything is running, open your browser and go to:
 
-You will need to run a `React` server, so, in another command terminal, go to the `dl-game-of-life-frontend` and run
+[http://localhost:3000](http://localhost:3000)
+
+---
+
+###  Option 2 — Development Mode (for local coding)
+
+```bash
+docker compose -f docker-compose.dev.yml up --build
 ```
+
+This mode enables **live reload** for backend and frontend.
+
+- Swagger (backend API docs): [http://localhost:5217/swagger/index.html](http://localhost:5217/swagger/index.html)  
+- To start the frontend manually:
+  ```bash
+  cd dl-game-of-life-frontend
+  npm install
+  npm run dev
+  ```
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+---
+
+### Option 3 — Run only MongoDB
+
+If you want to run the backend and frontend manually:
+
+```bash
+docker compose -f docker-compose.dev.yml up database
+```
+
+Then start the backend:
+```bash
+cd backend/DL.GameOfLife.Api
+dotnet run --configuration Debug
+```
+
+And the frontend:
+```bash
+cd dl-game-of-life-frontend
 npm run dev
 ```
 
+---
 
-**- Database only**
-```
-docker-compose -f docker-compose.dev.yml up database
-```
+## Running Tests and Generating Coverage
 
-All that this command do its to provide a MongoDB, so, you have to start the backend startup project at `backend/DL.GameOfLife.Api/` and the front and at `dl-game-of-life-frontend` folders
+Make sure you have the `reportgenerator` tool installed globally:
 
-For the backend, use the `Debug mode` of your desired tool, or run `dotnet run debug` at any command line tool. To the frontend, execute the  `npm run dev` command.
-
-
-
-## Test commands
-Certify that you are in the  `backend` folder and have `reportgenerator` installed on your computer
-If you dont have it installed run the following code
-
-```
+```bash
 dotnet tool install -g dotnet-reportgenerator-globaltool
 ```
 
-After that, run the following commands
+Then run:
 
-```
+```bash
 dotnet test --collect:"XPlat Code Coverage"
-dotnet reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:coveragereport" -reporttypes:Html
+reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:coveragereport" -reporttypes:Html
 ```
 
-The result output will be at the Test project (`backend/DL.GameOfLife.Tests/`)
+The coverage report will be generated at:
+```
+backend/DL.GameOfLife.Tests/coveragereport/index.html
+```
+
+---
+
+## About Conway’s Game of Life
+
+The Game of Life follows four simple rules for cell survival:
+
+1. Any live cell with fewer than two live neighbors dies (underpopulation).  
+2. Any live cell with two or three live neighbors lives on.  
+3. Any live cell with more than three live neighbors dies (overpopulation).  
+4. Any dead cell with exactly three live neighbors becomes alive (reproduction).
+
+---
+
+## License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Author
+
+**Jorge Luiz**  
+[GitHub](https://github.com/jorgeluiz) • [LinkedIn](https://www.linkedin.com/in/luizsilvajj)
