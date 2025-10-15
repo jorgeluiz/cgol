@@ -1,5 +1,5 @@
 # 🧬 Conway’s Game of Life  
-* Full-stack implementation with .NET, React, MongoDB and Docker.*
+**Full-stack implementation with .NET, React, MongoDB and Docker.**
 
 [![.NET](https://img.shields.io/badge/.NET-7.0-blue)](https://dotnet.microsoft.com/)
 ![React](https://img.shields.io/badge/React-19-61DAFB)
