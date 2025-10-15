@@ -16,6 +16,12 @@ It demonstrates **clean architecture practices** with a **.NET backend**, **Reac
 
 ---
 
+### Architetural Decisions
+
+This project uses .NET for the backend and React for the frontend, as required by the original code challenge. The architecture follows a modular and API-first design, with MongoDB chosen as the primary datastore due to its flexible schema and ability to efficiently handle the dynamic and irregular structure of the Game of Life grids. While MongoDB offers agility and scalability, it also introduces trade-offs such as weaker transactional guarantees compared to relational databases, a conscious decision aligned with the project’s goals and expected scale.
+
+---
+
 ## Project Structure
 
 ```bash
