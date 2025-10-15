@@ -27,43 +27,31 @@ Follow the steps below to set up and run the project in your local development e
 
 ### Installation and Execution
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/jorgeluiz/cgol.git](https://github.com/jorgeluiz/cgol.git)
-    ```
+---
 
-2.  **Navigate to the project directory:**
-    ```bash
-    cd cgol/dl-game-of-life-frontend
-    ```
+##  Installation and Execution
 
-3.  **Install the dependencies:**
-    ```bash
-    npm install
-    # or
-    # yarn install
-    ```
+Before running this project, make sure the **backend and database** are running.  
+You can easily start them using **Option 2** from the [main README](../README.md):
 
-4.  **Run the development server:**
-    ```bash
-    npm run dev
-    # or
-    # yarn dev
-    ```
+```bash
+docker compose -f docker-compose.dev.yml up --build
+```
 
-5.  **Open your browser:**
-    Go to `http://localhost:3000` to see the application running.
+This command will start the **API** and **MongoDB** containers required for local frontend development.
 
-## 🛠️ Available Scripts
+Once those services are up, run the frontend manually:
 
-In the project directory, you can run the following scripts:
+```bash
+npm install
+npm run dev
+```
 
-* `npm run dev`: Starts the application in development mode.
-* `npm run build`: Compiles the application for production.
-* `npm run start`: Starts a production server after the build.
-* `npm run lint`: Runs ESLint to analyze the code for errors and style issues.
+The application will then be available at [http://localhost:3000](http://localhost:3000).
 
-## 📂 Project Structure
+---
+
+##  Project Structure
 
 The folder structure follows the Next.js standard with the App Router, incorporating a feature-sliced approach:
 
@@ -86,7 +74,7 @@ dl-game-of-life-frontend/
 └── tailwind.config.ts       # Tailwind CSS configuration
 ```
 
-## 🎮 Game Actions and API Communication
+## Game Actions and API Communication
 
 The frontend communicates with a backend API to process and persist the game state. All communication is centralized in the `src/services/game-service.ts` service. Each game state is saved and has a unique `boardId`.
 
