@@ -80,3 +80,4 @@ app.UseCors(specificOriginspolicy);
 
 
 app.Run();
+public partial class Program { }
