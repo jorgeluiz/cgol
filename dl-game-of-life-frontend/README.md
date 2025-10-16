@@ -2,11 +2,11 @@
 
 This is the frontend repository for an implementation of John Conway's "Game of Life," developed with Next.js and TypeScript. The application allows users to view and interact with Game of Life simulations directly in the browser.
 
-## 🚀 Overview
+##  Overview
 
 The Game of Life is a cellular automaton that requires no players. The "game" evolves with each step (or "generation") based on a set of simple rules, resulting in complex and fascinating patterns. This web interface provides a visual and interactive way to explore these patterns.
 
-## ✨ Technologies Used
+##  Technologies Used
 
 The project was built using a set of modern technologies for web development:
 
@@ -48,6 +48,38 @@ npm run dev
 ```
 
 The application will then be available at [http://localhost:3000](http://localhost:3000).
+
+---
+
+##  Running Tests
+
+This project uses **Jest** and **React Testing Library**.
+
+To run all tests once:
+
+```bash
+npm test
+```
+
+To run tests in **watch mode** (reruns on file changes):
+
+```bash
+npm run test:watch
+```
+
+To run tests and **generate a coverage report**:
+
+```bash
+npm run test:coverage
+```
+
+### Linting
+
+To check for linting issues:
+
+```bash
+npm run lint
+```
 
 ---
 
